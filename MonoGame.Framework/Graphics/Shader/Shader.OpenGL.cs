@@ -6,8 +6,12 @@ using System;
 using System.IO;
 
 #if MONOMAC
+#if PLATFORM_MACOS_LEGACY
 using MonoMac.OpenGL;
-#elif WINDOWS || LINUX
+#else
+using OpenTK.Graphics.OpenGL;
+#endif
+#elif DESKTOPGL
 using OpenTK.Graphics.OpenGL;
 #elif GLES
 using OpenTK.Graphics.ES20;
@@ -133,20 +137,14 @@ namespace Microsoft.Xna.Framework.Graphics
 
         protected override void Dispose(bool disposing)
         {
-            if (!IsDisposed)
+            if (!IsDisposed && _shaderHandle != -1)
             {
                 Threading.BlockOnUIThread(() =>
-                {
-                    if (_shaderHandle != -1)
                     {
-                        if (GL.IsShader(_shaderHandle))
-                        {
-                            GL.DeleteShader(_shaderHandle);
-                            GraphicsExtensions.CheckGLError();
-                        }
+                        GL.DeleteShader(_shaderHandle);
+                        GraphicsExtensions.CheckGLError();
                         _shaderHandle = -1;
-                    }
-                });
+                    });
             }
 
             base.Dispose(disposing);

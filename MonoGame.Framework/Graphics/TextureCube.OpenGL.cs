@@ -4,9 +4,9 @@
 
 using System;
 
-#if MONOMAC
+#if MONOMAC && PLATFORM_MACOS_LEGACY
 using MonoMac.OpenGL;
-#elif WINDOWS || LINUX
+#elif DESKTOPGL || (MONOMAC && !PLATFORM_MACOS_LEGACY)
 using OpenTK.Graphics.OpenGL;
 #elif GLES
 using OpenTK.Graphics.ES20;
@@ -40,7 +40,7 @@ namespace Microsoft.Xna.Framework.Graphics
             GraphicsExtensions.CheckGLError();
 
 
-            format.GetGLFormat(out glInternalFormat, out glFormat, out glType);
+            format.GetGLFormat(GraphicsDevice, out glInternalFormat, out glFormat, out glType);
 
             for (int i = 0; i < 6; i++)
             {
